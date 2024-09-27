@@ -28,6 +28,9 @@ architecture rtl of uart_rx is
     signal current_state    : fsm_state;
     signal next_state       : fsm_state;
 begin
+    -- TEMP
+    o_data <= (others => '0');
+    o_data_valid <= '0';
 
     -- Handle transitioning to the next state
     process(i_clk, i_reset)
