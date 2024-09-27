@@ -1,7 +1,0 @@
-v 4
-file . "and_gate_tb.vhd" "3f3f1dfa9b258ba3a1d1f9553e951197c969008e" "20240819194723.652":
-  entity and_gate_tb at 1( 0) + 0 on 4;
-  architecture test of and_gate_tb at 4( 43) + 0 on 4;
-file . "and_gate.vhd" "0278b45d026c0849eb1910a5eef0af81e91f548d" "20240819194723.652":
-  entity and_gate at 1( 0) + 0 on 4;
-  architecture rtl of and_gate at 13( 151) + 0 on 4;
