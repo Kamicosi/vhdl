@@ -4,6 +4,7 @@ VHDL_SOURCES = $(shell pwd)/uart_tx.vhdl
 TOPLEVEL = uart_tx
 MODULE = uart_tx_tb
 SIM_ARGS = --wave=uart_tx.ghw
+GHDL_ARGS = --std=08
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
 

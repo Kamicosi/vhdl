@@ -10,18 +10,53 @@ from cocotb.types import LogicArray
 
 @cocotb.test()
 async def tx_simple(dut):
-    """Test that d propagates to q"""
-    # Initial output is unknown
-    assert LogicArray(dut.q.value) == LogicArray("X")
+    """We can transmit a single byte"""
+    # Reset everything
+    dut.i_reset.value = 1
+    await Timer(2, units="ns")
+    assert dut.o_data_ready.value == 0
+    assert dut.o_tx.value == 1
+    assert dut.o_rx_en.value == 0
 
-    # 10us clock
-    clock = Clock(dut.clk, 10, units="us")
+    # Deassert reset
+    dut.i_reset.value = 0
+    await Timer(2, units="ns")
+
+    # Start clocking
+    clock = Clock(dut.i_clk, 10, units="us")
     cocotb.start_soon(clock.start(start_high=False))
 
-    # Assign random inputs
-    for i in range(10):
-        val = random.randint(0, 1)
-        dut.d.value = val
-        await RisingEdge(dut.clk)
-        await FallingEdge(dut.clk)
-        assert dut.q.value == val, f"output q was incorrect on the {i}th cycle"
+    # Send random number
+    assert dut.o_data_ready == 1
+    assert dut.o_tx == 1
+    assert dut.o_rx_en == 0
+    val = random.randint(0, 255)
+    dut.i_data.value = val
+    dut.i_data_valid.value = 1
+    await RisingEdge(dut.i_clk)
+    await FallingEdge(dut.i_clk)
+
+    # Start bit
+    assert dut.o_data_ready == 0
+    assert dut.o_tx == 0
+    assert dut.o_rx_en == 1
+    await RisingEdge(dut.i_clk)
+    await FallingEdge(dut.i_clk)
+
+    # 8 data bits
+    for i in range(8):
+        assert dut.o_tx.value == (val >> i) & 1
+        await RisingEdge(dut.i_clk)
+        await FallingEdge(dut.i_clk)
+
+    # Stop bit
+    assert dut.o_data_ready == 0
+    assert dut.o_tx == 1
+    assert dut.o_rx_en == 1
+    await RisingEdge(dut.i_clk)
+    await FallingEdge(dut.i_clk)
+
+    # Idle
+    assert dut.o_data_ready == 1
+    assert dut.o_tx == 1
+    assert dut.o_rx_en == 0

@@ -17,8 +17,6 @@ entity uart_rx is
                                                             -- recieve
         o_data_valid    : out std_logic     -- Output data is valid
     );
-
-
 end entity;
 
 architecture rtl of uart_rx is
