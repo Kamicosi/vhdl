@@ -62,12 +62,11 @@ begin
     -- Combinational logic
     process(all)
     begin
+        next_state <= IDLE;
         case current_state is
             when IDLE =>
                 if i_rx = '0' then
                     next_state <= RECEIVE;
-                else
-                    next_state <= IDLE;
                 end if;
             when RECEIVE =>
                 if bit_num = 7 then
@@ -76,9 +75,6 @@ begin
                     next_state <= RECEIVE;
                 end if;
             when STOP =>
-                next_state <= IDLE;
-            when others =>
-                next_state <= IDLE;
         end case;
     end process;
 

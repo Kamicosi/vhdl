@@ -26,12 +26,46 @@ entity uart_tx is
         -- Sequential logic
         process(i_clk, i_reset)
         begin
-        end
+            if i_reset = '1' then
+            elsif rising_edge(i_clk) then
+                case current_state is
+                    when IDLE =>
+                        bit_num <= 0;
+                        if i_data_valid = '1' then
+                            r_data <= i_data;
+                        end if;
+                    when START =>
+                    when TRANSMIT =>
+                        bit_num <= bit_num + 1;
+                    when STOP =>
+                current_state <= next_state;
+            end if;
+        end process;
 
         -- Combinational logic
         process(all)
         begin
-        end
+            o_data_ready <= '0';
+            o_tx <= '1';
+            next_state <= IDLE;
+            case current_state is
+                when IDLE =>
+                    o_data_ready <= '1';
+                    if i_data_valid = '1' then
+                        next_state <= START;
+                    end if;
+                when START =>
+                    o_tx <= '0';
+                    next_state <= TRANSMIT;
+                when TRANSMIT =>
+                    o_tx <= r_data(bit_num);
+                    if bit_num = 7 then
+                        next_state <= STOP;
+                    else
+                        next_state <= TRANSMIT;
+                    end if;
+                when STOP =>
+        end process;
 
     end architecture;
 end entity;
