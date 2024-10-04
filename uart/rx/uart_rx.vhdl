@@ -41,8 +41,8 @@ begin
             case current_state is
                 when IDLE =>
                     bit_num <= 0;
-                    if i_rx = '0' then 
-                        o_data_valid <= '0'; 
+                    if i_rx = '0' then
+                        o_data_valid <= '0';
                     end if;
                 when RECEIVE =>
                     data(bit_num) <= i_rx;
@@ -60,7 +60,7 @@ begin
     end process;
 
     -- Combinational logic
-    process(current_state, bit_num, i_rx)
+    process(all)
     begin
         case current_state is
             when IDLE =>
