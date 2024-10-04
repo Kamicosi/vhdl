@@ -3,14 +3,10 @@ import random
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer
-from cocotb.types import LogicArray
-
-# Most of this is based on the 'Usage' section of the cocotb README.md:
-# https://github.com/cocotb/cocotb
 
 @cocotb.test()
 async def tx_simple(dut):
-    """We can transmit a single byte"""
+    """Transmit a single byte"""
     # Reset everything
     dut.i_reset.value = 1
     await Timer(2, units="ns")
@@ -26,7 +22,7 @@ async def tx_simple(dut):
     clock = Clock(dut.i_clk, 10, units="us")
     cocotb.start_soon(clock.start(start_high=False))
 
-    # Send random number
+    # Give it a random number
     assert dut.o_data_ready == 1
     assert dut.o_tx == 1
     assert dut.o_rx_en == 0
@@ -35,6 +31,7 @@ async def tx_simple(dut):
     dut.i_data_valid.value = 1
     await RisingEdge(dut.i_clk)
     await FallingEdge(dut.i_clk)
+    dut.i_data_valid.value = 0
 
     # Start bit
     assert dut.o_data_ready == 0
@@ -49,8 +46,8 @@ async def tx_simple(dut):
         await RisingEdge(dut.i_clk)
         await FallingEdge(dut.i_clk)
 
-    # Stop bit
-    assert dut.o_data_ready == 0
+    # Stop bit (ready for next byte)
+    assert dut.o_data_ready == 1
     assert dut.o_tx == 1
     assert dut.o_rx_en == 1
     await RisingEdge(dut.i_clk)
@@ -60,3 +57,7 @@ async def tx_simple(dut):
     assert dut.o_data_ready == 1
     assert dut.o_tx == 1
     assert dut.o_rx_en == 0
+
+@cocotb.test()
+async def tx_multiple_bytes(dut):
+    """Send multiple bytes back-to-back with no gap in-between"""
