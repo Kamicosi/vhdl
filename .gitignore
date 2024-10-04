@@ -2,3 +2,6 @@
 *.cf
 *.ghw
 .venv/
+*.xml
+__pycache__/
+sim_build/
