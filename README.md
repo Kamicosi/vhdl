@@ -1,7 +1,7 @@
  # A collection of projects for learning and mastering VHSIC Hardware Description Language, or VHDL.
 
 ## Goals
- - Learn the VHDL programming language
+ - Learn the VHDL hardware description language
  - Experiment with different verification strategies
  - Gain experience working on larger, more complex designs
 
