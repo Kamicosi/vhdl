@@ -1,5 +1,4 @@
- # A collection of projects for learning and mastering VHSIC Hardware
- # Description Language, or VHDL.
+ # A collection of projects for learning and mastering VHSIC Hardware Description Language, or VHDL.
 
 ## Goals
  - Learn the VHDL programming language
