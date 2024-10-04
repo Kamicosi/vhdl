@@ -1,4 +1,4 @@
- # A collection of projects for learning and mastering VHSIC Hardware Description Language, or VHDL.
+# A collection of projects for learning and mastering VHSIC Hardware Description Language, or VHDL.
 
 ## Goals
  - Learn the VHDL hardware description language
@@ -6,7 +6,7 @@
  - Gain experience working on larger, more complex designs
 
 ## Technology used
-The VHDL simulator ussed is `ghdl`. Modules that output `ghw` files can have
+The VHDL simulator used is `ghdl`. Modules that output `ghw` files can have
 their signals viewed with `gtkwave`. Testbenches are either written in VHDL or
 in Python using `cocotb`.
 
