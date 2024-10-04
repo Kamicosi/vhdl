@@ -35,16 +35,16 @@ begin
     begin
         if i_reset = '1' then
             current_state <= IDLE;
-            bit_num <= 0;
-            data <= (others => '0');
             o_data <= (others => '0');
             o_data_valid <= '0';
         elsif rising_edge(i_clk) and i_rx_en = '1' then
             case current_state is
                 when IDLE =>
                     bit_num <= 0;
+                    if i_rx = '0' then 
+                        o_data_valid <= '0'; 
+                    end if;
                 when RECEIVE =>
-                    o_data_valid <= '0';
                     data(bit_num) <= i_rx;
                     bit_num <= bit_num + 1;
                 when STOP =>
@@ -60,7 +60,7 @@ begin
     end process;
 
     -- Combinational logic
-    process(current_state, bit_num)
+    process(current_state, bit_num, i_rx)
     begin
         case current_state is
             when IDLE =>

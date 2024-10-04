@@ -28,27 +28,28 @@ architecture tb of uart_rx_tb is
     -- Signals                                                                 -
     ----------------------------------------------------------------------------
     -- Constants
-    constant TV_SIZE_IN     : integer := 3;
-    constant TV_SIZE_OUT    : integer := 9;
+    constant TV_SIZE_IN             : integer := 3;
+    constant TV_SIZE_OUT            : integer := 9;
     -- Clock
-    signal i_clk            : std_logic;
+    signal i_clk                    : std_logic := '0';
     -- Test vector signals
-    signal tv_signals_in            : std_logic_vector(TV_SIZE_IN-1 downto 0);
+    signal tv_signals_in            : std_logic_vector(TV_SIZE_IN-1 downto 0)
+                                        := (others => '0');
     signal tv_signals_out           : std_logic_vector(TV_SIZE_OUT-1 downto 0);
     signal i_reset                  : std_logic;
     signal i_rx                     : std_logic;
     signal i_rx_en                  : std_logic;
-    signal o_data                   : std_logic_vector(7 downto 0);
+    signal o_data                   : std_logic_vector(0 to 7);
     signal o_data_valid             : std_logic;
-    signal o_data_expected          : std_logic_vector(7 downto 0);
-    signal o_data_valid_expected    : std_logic;
+    -- signal o_data_expected          : std_logic_vector(7 downto 0);
+    -- signal o_data_valid_expected    : std_logic;
 begin
     -- Constant expressions
     i_reset                     <= tv_signals_in(0);
     i_rx                        <= tv_signals_in(1);
     i_rx_en                     <= tv_signals_in(2);
-    tv_signals_out(7 downto 0)  <= o_data;
-    tv_signals_out(8)           <= o_data_valid;
+    tv_signals_out(8 downto 1)  <= o_data;
+    tv_signals_out(0)           <= o_data_valid;
 
     ----------------------------------------------------------------------------
     -- Entities                                                                -
@@ -67,7 +68,7 @@ begin
     -- Processes                                                               -
     ----------------------------------------------------------------------------
     clock_generation: process
-        constant C_CLK          : time := 10 ns;
+        constant C_CLK                  : time := 10 ns;
     begin
         -- Got from the internet, idk if this is what I want
         i_clk <= '0' after C_CLK, '1' after 2*C_CLK;
@@ -92,7 +93,8 @@ begin
             end if;
             read(line_buffer, expected_str);    -- Get expected outputs
             tv_signals_in <= to_std_logic_vector(input_str); -- Apply signals
-            wait until i_clk = '1';
+            wait until i_clk = '1'; -- Clock in inputs
+            wait until i_clk = '0'; -- Compare outputs on negative edge
 
             -- Check outputs
             -- Note: We do (2 to 10) because the space between the vectors is
