@@ -61,3 +61,42 @@ async def tx_simple(dut):
 @cocotb.test()
 async def tx_multiple_bytes(dut):
     """Send multiple bytes back-to-back with no gap in-between"""
+    # Reset and start clocking
+    dut.i_reset.value = 1
+    await Timer(2, units="ns")
+    dut.i_reset.value = 0
+    await Timer(2, units="ns")
+    clock = Clock(dut.i_clk, 10, units="us")
+    cocotb.start_soon(clock.start(start_high=False))
+    assert dut.o_data_ready == 1
+    assert dut.o_tx == 1
+    assert dut.o_rx_en == 0
+
+    # Send 10 numbers back-to-back
+    dut.i_data_valid.value = 1
+    for i in range(10):
+        # Input random number
+        val = random.randint(0, 255)
+        dut.i_data.value = val
+        await RisingEdge(dut.i_clk)
+        await FallingEdge(dut.i_clk)
+
+        # Start bit
+        assert dut.o_data_ready == 0
+        assert dut.o_tx == 0
+        assert dut.o_rx_en == 1
+        await RisingEdge(dut.i_clk)
+        await FallingEdge(dut.i_clk)
+
+        # 8 data bits
+        for j in range(8):
+            assert dut.o_tx.value == (val >> j) & 1
+            await RisingEdge(dut.i_clk)
+            await FallingEdge(dut.i_clk)
+
+        # Stop bit (ready for next byte)
+        assert dut.o_data_ready == 1
+        assert dut.o_tx == 1
+        assert dut.o_rx_en == 1
+        await RisingEdge(dut.i_clk)
+        await FallingEdge(dut.i_clk)
