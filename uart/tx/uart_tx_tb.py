@@ -68,6 +68,7 @@ async def tx_multiple_bytes(dut):
     await Timer(2, units="ns")
     clock = Clock(dut.i_clk, 10, units="us")
     cocotb.start_soon(clock.start(start_high=False))
+    
     assert dut.o_data_ready == 1
     assert dut.o_tx == 1
     assert dut.o_rx_en == 0
