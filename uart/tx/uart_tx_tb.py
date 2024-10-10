@@ -72,6 +72,7 @@ async def tx_multiple_bytes(dut):
     assert dut.o_tx == 1
     assert dut.o_rx_en == 0
 
+
     # Send 10 numbers back-to-back
     dut.i_data_valid.value = 1
     for i in range(10):
